@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "840212005267",
+    "project_id": "fir-memo-app-fff8a",
+    "storage_bucket": "fir-memo-app-fff8a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:840212005267:android:c2b6d5e381633d21c5a866",
+        "android_client_info": {
+          "package_name": "com.example.sns_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpkd5sYDiOEHaaoZO0pm4NzIQ1mnPD_90"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
