@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sns_app/modules/memo.dart';
-import 'package:sns_app/pages/memo_create_page.dart';
+import 'package:sns_app/pages/memo_upsert_page.dart';
 import 'package:sns_app/pages/memo_detail_page.dart';
 
 class MemoListPage extends StatefulWidget {
@@ -26,7 +26,7 @@ class _MemoListPageState extends State<MemoListPage> {
         title: Text('メモ一覧'),
       ),
       body: StreamBuilder(
-        stream: memoCol.orderBy('createAt', descending: true).snapshots(),
+        stream: memoCol.orderBy('createdAt', descending: true).snapshots(),
         builder: (context, asyncSnapshot) {
           if (asyncSnapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -44,16 +44,17 @@ class _MemoListPageState extends State<MemoListPage> {
             itemBuilder: (context, index) {
               final data = docs[index].data();
               final memo = Memo(
+                id: docs[index].id,
                 title: data['title'],
                 content: data['content'],
-                createAt: data['createAt'],
-                updateAt: data['updateAt'],
+                createdAt: data['createdAt'],
+                updatedAt: data['updatedAt'],
               );
               return ListTile(
                 title: Text(memo.title),
                 subtitle: Text(memo.content),
                 trailing: Text(
-                  DateFormat.yMMMMEEEEd('ja_JP').format(memo.createAt.toDate()),
+                  DateFormat.yMMMMEEEEd('ja_JP').format(memo.createdAt.toDate()),
                 ),
                 onTap: () {
                   Navigator.push(
@@ -72,7 +73,7 @@ class _MemoListPageState extends State<MemoListPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const MemoCreatePage()),
+            MaterialPageRoute(builder: (context) => const MemoUpsertPage()),
           );
         },
         tooltip: 'Increment',
