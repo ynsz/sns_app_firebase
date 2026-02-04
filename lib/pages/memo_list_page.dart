@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sns_app/modules/memo.dart';
+import 'package:sns_app/pages/memo_detail_page.dart';
 
 class MemoListPage extends StatefulWidget {
   const MemoListPage({super.key, required this.title});
@@ -24,15 +25,13 @@ class _MemoListPageState extends State<MemoListPage> {
     memoList = docs.map((doc) {
       final data = doc.data();
       return Memo(
-          title: data['title'],
-          content: data['content'],
-          createAt: data['createAt'],
-          updateAt: data['updateAt'],
+        title: data['title'],
+        content: data['content'],
+        createAt: data['createAt'],
+        updateAt: data['updateAt'],
       );
     }).toList();
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -45,10 +44,7 @@ class _MemoListPageState extends State<MemoListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('メモ一覧'),
       ),
       body: ListView.builder(
@@ -58,8 +54,16 @@ class _MemoListPageState extends State<MemoListPage> {
             title: Text(memoList[index].title),
             subtitle: Text(memoList[index].content),
             trailing: Text(
-              DateFormat.yMMMMEEEEd('ja_JP').format(memoList[index].createAt.toDate()),
+              DateFormat.yMMMMEEEEd(
+                'ja_JP',
+              ).format(memoList[index].createAt.toDate()),
             ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MemoDetailPage()),
+              );
+            },
           );
         },
       ),
