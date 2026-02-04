@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sns_app/modules/memo.dart';
@@ -14,6 +15,13 @@ class MemoDetailPage extends StatefulWidget {
 
 class _MemoDetailPageState extends State<MemoDetailPage> {
   late Memo cachedMemo = widget.memo;
+
+  Future<void> deleteMemo() async {
+    final doc = FirebaseFirestore.instance
+        .collection('memos')
+        .doc(cachedMemo.id);
+    await doc.delete();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +60,15 @@ class _MemoDetailPageState extends State<MemoDetailPage> {
                         ListTile(
                           title: const Text('削除'),
                           leading: Icon(Icons.delete),
-                          onTap: () {},
+                          onTap: () async {
+                            await deleteMemo();
+                            if (context.mounted) {
+                              Navigator.popUntil(
+                                context,
+                                (route) => route.isFirst,
+                              );
+                            }
+                          },
                         ),
                       ],
                     ),
