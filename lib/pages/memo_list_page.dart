@@ -16,30 +16,7 @@ class MemoListPage extends StatefulWidget {
 }
 
 class _MemoListPageState extends State<MemoListPage> {
-  var memoList = <Memo>[];
-
-  Future<void> fetchMemos() async {
-    final firestore = FirebaseFirestore.instance;
-    final memoCol = firestore.collection('memos');
-    final snapshot = await memoCol.get();
-    final docs = snapshot.docs;
-    memoList = docs.map((doc) {
-      final data = doc.data();
-      return Memo(
-        title: data['title'],
-        content: data['content'],
-        createAt: data['createAt'],
-        updateAt: data['updateAt'],
-      );
-    }).toList();
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchMemos();
-  }
+  final memoCol = FirebaseFirestore.instance.collection('memos');
 
   @override
   Widget build(BuildContext context) {
@@ -48,27 +25,50 @@ class _MemoListPageState extends State<MemoListPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('メモ一覧'),
       ),
-      body: ListView.builder(
-        itemCount: memoList.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(memoList[index].title),
-            subtitle: Text(memoList[index].content),
-            trailing: Text(
-              DateFormat.yMMMMEEEEd(
-                'ja_JP',
-              ).format(memoList[index].createAt.toDate()),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MemoDetailPage(memoList[index]),
+      body: StreamBuilder(
+        stream: memoCol.snapshots(),
+        builder: (context, asyncSnapshot) {
+          if(asyncSnapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator(),);
+          }
+          if(asyncSnapshot.hasError) {
+            return Center(child: Text(asyncSnapshot.error.toString()));
+          }
+
+          final docs = asyncSnapshot.data?.docs;
+          if (docs == null || docs.isEmpty) {
+            return const Center(child: Text('メモの情報がありません'));
+          }
+          return ListView.builder(
+            itemCount: docs.length,
+            itemBuilder: (context, index) {
+              final data = docs[index].data();
+              final memo = Memo(
+                title : data['title'],
+                content : data['content'],
+                createAt : data['createAt'],
+                updateAt : data['updateAt'],
+              );
+              return ListTile(
+                title: Text(memo.title),
+                subtitle: Text(memo.content),
+                trailing: Text(
+                  DateFormat.yMMMMEEEEd(
+                    'ja_JP',
+                  ).format(memo.createAt.toDate()),
                 ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MemoDetailPage(memo),
+                    ),
+                  );
+                },
               );
             },
           );
-        },
+        }
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
