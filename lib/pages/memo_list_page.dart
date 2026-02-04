@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sns_app/modules/memo.dart';
+import 'package:sns_app/pages/memo_create_page.dart';
 import 'package:sns_app/pages/memo_detail_page.dart';
 
 class MemoListPage extends StatefulWidget {
@@ -61,14 +62,21 @@ class _MemoListPageState extends State<MemoListPage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MemoDetailPage(memoList[index])),
+                MaterialPageRoute(
+                  builder: (context) => MemoDetailPage(memoList[index]),
+                ),
               );
             },
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MemoCreatePage()),
+          );
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
