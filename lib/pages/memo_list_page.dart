@@ -26,12 +26,12 @@ class _MemoListPageState extends State<MemoListPage> {
         title: Text('メモ一覧'),
       ),
       body: StreamBuilder(
-        stream: memoCol.snapshots(),
+        stream: memoCol.orderBy('createAt', descending: true).snapshots(),
         builder: (context, asyncSnapshot) {
-          if(asyncSnapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator(),);
+          if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
           }
-          if(asyncSnapshot.hasError) {
+          if (asyncSnapshot.hasError) {
             return Center(child: Text(asyncSnapshot.error.toString()));
           }
 
@@ -44,18 +44,16 @@ class _MemoListPageState extends State<MemoListPage> {
             itemBuilder: (context, index) {
               final data = docs[index].data();
               final memo = Memo(
-                title : data['title'],
-                content : data['content'],
-                createAt : data['createAt'],
-                updateAt : data['updateAt'],
+                title: data['title'],
+                content: data['content'],
+                createAt: data['createAt'],
+                updateAt: data['updateAt'],
               );
               return ListTile(
                 title: Text(memo.title),
                 subtitle: Text(memo.content),
                 trailing: Text(
-                  DateFormat.yMMMMEEEEd(
-                    'ja_JP',
-                  ).format(memo.createAt.toDate()),
+                  DateFormat.yMMMMEEEEd('ja_JP').format(memo.createAt.toDate()),
                 ),
                 onTap: () {
                   Navigator.push(
@@ -68,7 +66,7 @@ class _MemoListPageState extends State<MemoListPage> {
               );
             },
           );
-        }
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
