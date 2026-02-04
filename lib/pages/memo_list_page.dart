@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sns_app/modules/memo.dart';
@@ -12,26 +14,41 @@ class MemoListPage extends StatefulWidget {
 }
 
 class _MemoListPageState extends State<MemoListPage> {
-  final memoList = [
-    Memo(
-      title: 'test1',
-      content: 'test1の詳細',
-      createAt: DateTime.now(),
-      updateAt: DateTime.now(),
-    ),
-    Memo(
-      title: 'test2',
-      content: 'test2の詳細',
-      createAt: DateTime.now(),
-      updateAt: DateTime.now(),
-    ),
-  ];
+  var memoList = <Memo>[];
+
+  Future<void> fetchMemos() async {
+    final firestore = FirebaseFirestore.instance;
+    final memoCol = firestore.collection('memos');
+    final snapshot = await memoCol.get();
+    final docs = snapshot.docs;
+    memoList = docs.map((doc) {
+      final data = doc.data();
+      return Memo(
+          title: data['title'],
+          content: data['content'],
+          createAt: data['createAt'],
+          updateAt: data['updateAt'],
+      );
+    }).toList();
+    setState(() {
+
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchMemos();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .inversePrimary,
         title: Text('メモ一覧'),
       ),
       body: ListView.builder(
@@ -41,7 +58,7 @@ class _MemoListPageState extends State<MemoListPage> {
             title: Text(memoList[index].title),
             subtitle: Text(memoList[index].content),
             trailing: Text(
-              DateFormat.yMMMMEEEEd('ja_JP').format(memoList[index].createAt),
+              DateFormat.yMMMMEEEEd('ja_JP').format(memoList[index].createAt.toDate()),
             ),
           );
         },
