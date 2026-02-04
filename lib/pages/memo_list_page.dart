@@ -61,7 +61,7 @@ class _MemoListPageState extends State<MemoListPage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MemoDetailPage()),
+                MaterialPageRoute(builder: (context) => MemoDetailPage(memoList[index])),
               );
             },
           );
